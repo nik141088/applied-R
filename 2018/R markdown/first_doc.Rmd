@@ -1,0 +1,180 @@
+---
+title: "Brief Tutorial on Documentation in R"
+Date: June 10, 2018
+bibliography: bib.bib
+output:
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+citecolor: magenta
+documentclass: article # latex
+fontsize: 12pt # latex
+geometry: margin=1.5in # latex
+header-includes: \linespread{1.25}
+link-citations: yes
+linkcolor: blue
+citation_package: natbib # latex
+params:
+  stargazer_type: latex
+Author: Nikhil Vidhani
+urlcolor: red
+---
+
+A # followed by text becomes your title!
+
+# Brief tutorial on R Manrkdown
+
+Optional YAML metadata resides between two tripple dashes: `---`
+
+Section begins by two hashes: ##
+
+## Section 1
+
+This is goign to be a first document.
+
+How do we include an R code in this doc? Well just press: Ctrl-Alt-I and a code separator (three back ticks: ```) will appear!
+
+
+```{r}
+require(dplyr);
+ns = dplyr::nasa;
+ns = as.data.frame(ns);
+mean_lat = mean(ns$lat, na.rm = T);
+mean_lat
+```
+
+But I dont want to see all these messages in my doc. I am going to run the above with option: `include = FALSE`
+
+```{r include = FALSE}
+ns = dplyr::nasa;
+ns = as.data.frame(ns);
+mean_lat = mean(ns$lat, na.rm = T);
+mean_lat
+```
+
+See nothing got printed above!
+
+But I do want to display the output but not the code! Use `echo = FALSE` instead.
+
+
+```{r echo = FALSE}
+ns = dplyr::nasa;
+ns = as.data.frame(ns);
+mean_lat = mean(ns$lat, na.rm = T);
+mean_lat
+```
+
+Now only the output got printed. This is what I really wanted!
+
+What if I wanted to dynamically use a value in my doc? Like generated from a computation? We can do that by writing within backticks with first letter being `r`. So mean latitude is `r mean_lat`. This makes it very easy to update report in future with minimal changes. Lets write counting from 1 to 10: `r 1:10`
+
+Now, let's make a plot!
+
+```{r echo = FALSE, warning = FALSE}
+ns %>% mutate(yr = year + (month-1)/12) %>% group_by(yr) %>% summarise(avg_temp = mean(surftemp), avg_pres = mean(pressure)) %>% select(avg_temp, avg_pres) %>% as.data.frame %>% plot(col = "blue", lwd = 2);
+```
+
+
+The plot here is a bit too big. I would like a smaller one for my doc:
+
+
+```{r echo = FALSE, warning = FALSE, fig.width=5, fig.height=4, fig.cap = "avg pressure vs avg temp"}
+ns %>% mutate(yr = year + (month-1)/12) %>% group_by(yr) %>% summarise(avg_temp = mean(surftemp), avg_pres = mean(pressure)) %>% select(avg_temp, avg_pres) %>% as.data.frame %>% plot(col = "blue", lwd = 2);
+```
+
+
+See the above fits much better!
+
+## Section 2
+
+To get code within the doc (in teletype constant width fonts), use single backtics: `code`, Package `dplyr`
+
+Block quote begins with `>` sign:
+
+> This is a block quote!
+
+Any text within a pair of `*` is `*italicized*`: *italicized* and within `**` is `**bolded**`: **bolded**
+
+Single star followed by a space: `* ` produces bullet points! 4 blank spaces, a star and then a space: `|    * |` produces sub-itmes! It can be further generalized!
+
+* 1
+* 2
+    * 2.1
+    * 2.2
+        * 2.2.1
+
+
+## Section 3
+
+Math mode can be entered by writing everything within pair of dollar signs: `$`.
+
+$F = m \cdot a$, $\lambda^2 \gamma$, $\infty$, and so on!
+
+Write a block of equations using two dollar signs instead of one: `$$`. $$\int e^x dx = e^x + C$$.
+
+Use underscore `_` for subscripts and exponent `^` for superscript. `H_0` is $H_0$ and `H^0` is $H^0$. Use curly brackets to combine parts of an equation, i.e. to write `lambda^(a+b)` as `\lambda^{a+b}`: $\lambda^{a+b}$
+
+
+## Section 4
+
+Use extra hash `#` for sub-sectioning.
+
+### Sub-section 4.1
+### Sub-sub-section 4.1.1
+### Sub-sub-sub-section 4.1.1.1
+### Sub-sub-sub-sub-section 4.1.1.1.1
+
+## Section 5
+
+To create a document, a process called knitting, you can simply click to knit on Rmarkdown interface. Or, you can incoke the command line: `rmarkdown::render("first_doc.Rmd")`
+
+## Section 6
+
+Hyperlink can be added by writing text within braces `[]` followed by the weblink written within parantheses `()`. Thus you write like: `[Google](https://www.google.com/)` to get [Google](https://www.google.com/).
+
+Footnote can be added by `[^1]`. Here is one [^1].
+
+[^1]: That's my foot note!
+
+You can also add a reference using `[@bib_ref]`. For instance I'll make a reference here: [@baumer2014r]. Also don't forget to add a section on References and mention the `.bib` file in YAML metadata.
+
+## Section 7
+
+Let's make a table. Use the `result = "asis"` option to make sure that the table output is processed as is and not further processed!
+
+```{r echo = FALSE, warning = F, message = F, results = "asis"}
+library(stargazer);
+x = rnorm(1000, 0, 1);
+u = rnorm(1000, 0, 0.5);
+y = u + x;
+fit = lm(y ~ x);
+stargazer(fit, type = params$stargazer_type, title = "Table with Stargazer in Rmarkdown")
+```
+
+## Section 8
+Let's make table:
+
+| First Header  | Second Header | Third Header         |
+| :------------ | :-----------: | -------------------: |
+| First row     | Data          | Very long data entry |
+| Second row    | **Cell**      | *Cell*               |
+| Third row     | Cell that spans across two columns  ||
+
+Table: Your Caption
+
+## Section 9
+
+\begin{equation}
+a=b^2
+\end{equation}
+
+
+# References
+
+
+
+
